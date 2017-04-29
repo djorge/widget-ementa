@@ -5,7 +5,8 @@
 import datetime
 import re
 import sys
-
+import holidays
+from datetime import date
 #for ios
 #csv_file = codecs.open(file_to_open,'r','utf-8')
 #for windows
@@ -29,8 +30,8 @@ numementa=0
 decimal= 0
 ementa=0
 dia = {}
-
-
+feriados = holidays.Portugal()
+shift_feriado =0
 '''
 carne,assado, batatas, 509
 {'14':{'linha1':(carne,assado,batatas,500)}}
@@ -245,6 +246,13 @@ for num in [2]:
       diaint = int(dedia)
       if ementa >5:
         diaint+=(ementa/5)
+        while True:
+          diaint += shift_feriado
+          if date(int(ano),int(ames), diaint) in feriados:
+            print '++++++ %d/%d/%d'%(int(ano),int(ames),diaint)
+            shift_feriado+=1
+          else:
+            break
         ementalinha= ementa % 5
         if ementalinha == 0:
           ementalinha=5 
@@ -253,6 +261,7 @@ for num in [2]:
         print '%d=%d%%5'%(ementalinha,ementa)
       else:
         ementalinha = ementa
+      
       print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
       dia[str(diaint)][ementalinha]['ementa'] = line
       
