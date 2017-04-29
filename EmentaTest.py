@@ -27,7 +27,7 @@ numrefeicao=0
 numcaloria=0
 numementa=0
 decimal= 0
-ementa=1
+ementa=0
 dia = {}
 
 
@@ -69,106 +69,107 @@ for num in [2]:
         dia[str(diaint+2)]= {}
         dia[str(diaint+3)]= {}
         dia[str(diaint+4)]= {} 
-        dia[str(diaint)][ementa] = {}
+        dia[str(diaint)][ementa+5] = {}
         dia[str(diaint)][ementa+1] = {}
         dia[str(diaint)][ementa+2] = {}
         dia[str(diaint)][ementa+3] = {}
         dia[str(diaint)][ementa+4] = {}        
-        dia[str(diaint)][ementa]['tipo_prato'] = {}
+        dia[str(diaint)][ementa+5]['tipo_prato'] = {}
         dia[str(diaint)][ementa+1]['tipo_prato'] = {}
         dia[str(diaint)][ementa+2]['tipo_prato'] = {}
         dia[str(diaint)][ementa+3]['tipo_prato'] = {}
         dia[str(diaint)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diaint)][ementa]['calorias'] = {}
+        dia[str(diaint)][ementa+5]['calorias'] = {}
         dia[str(diaint)][ementa+1]['calorias'] = {}
         dia[str(diaint)][ementa+2]['calorias'] = {}
         dia[str(diaint)][ementa+3]['calorias'] = {}
         dia[str(diaint)][ementa+4]['calorias'] = {}
-        dia[str(diaint)][ementa]['refeicao'] = {}
+        dia[str(diaint)][ementa+5]['refeicao'] = {}
         dia[str(diaint)][ementa+1]['refeicao'] = {}
         dia[str(diaint)][ementa+2]['refeicao'] = {}
         dia[str(diaint)][ementa+3]['refeicao'] = {}
         dia[str(diaint)][ementa+4]['refeicao '] = {}
 
-        dia[str(diaint+1)][ementa] = {}
+        dia[str(diaint+1)][ementa+5] = {}
         dia[str(diaint+1)][ementa+1] = {}
         dia[str(diaint+1)][ementa+2] = {}
         dia[str(diaint+1)][ementa+3] = {}
         dia[str(diaint+1)][ementa+4] = {}        
-        dia[str(diaint+1)][ementa]['tipo_prato'] = {}
+        dia[str(diaint+1)][ementa+5]['tipo_prato'] = {}
         dia[str(diaint+1)][ementa+1]['tipo_prato'] = {}
         dia[str(diaint+1)][ementa+2]['tipo_prato'] = {}
         dia[str(diaint+1)][ementa+3]['tipo_prato'] = {}
         dia[str(diaint+1)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diaint+1)][ementa]['calorias'] = {}
+        dia[str(diaint+1)][ementa+5]['calorias'] = {}
         dia[str(diaint+1)][ementa+1]['calorias'] = {}
         dia[str(diaint+1)][ementa+2]['calorias'] = {}
         dia[str(diaint+1)][ementa+3]['calorias'] = {}
         dia[str(diaint+1)][ementa+4]['calorias'] = {}
-        dia[str(diaint+1)][ementa]['refeicao'] = {}
+        dia[str(diaint+1)][ementa+5]['refeicao'] = {}
         dia[str(diaint+1)][ementa+1]['refeicao'] = {}
         dia[str(diaint+1)][ementa+2]['refeicao'] = {}
         dia[str(diaint+1)][ementa+3]['refeicao'] = {}
         dia[str(diaint+1)][ementa+4]['refeicao '] = {}
         
-        dia[str(diaint+2)][ementa] = {}
+        dia[str(diaint+2)][ementa+5] = {}
         dia[str(diaint+2)][ementa+1] = {}
         dia[str(diaint+2)][ementa+2] = {}
         dia[str(diaint+2)][ementa+3] = {}
         dia[str(diaint+2)][ementa+4] = {}        
-        dia[str(diaint+2)][ementa]['tipo_prato'] = {}
+        dia[str(diaint+2)][ementa+5]['tipo_prato'] = {}
         dia[str(diaint+2)][ementa+1]['tipo_prato'] = {}
         dia[str(diaint+2)][ementa+2]['tipo_prato'] = {}
         dia[str(diaint+2)][ementa+3]['tipo_prato'] = {}
         dia[str(diaint+2)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diaint+2)][ementa]['calorias'] = {}
+        dia[str(diaint+2)][ementa+5]['calorias'] = {}
         dia[str(diaint+2)][ementa+1]['calorias'] = {}
         dia[str(diaint+2)][ementa+2]['calorias'] = {}
         dia[str(diaint+2)][ementa+3]['calorias'] = {}
         dia[str(diaint+2)][ementa+4]['calorias'] = {}
-        dia[str(diaint+2)][ementa]['refeicao'] = {}
+        dia[str(diaint+2)][ementa+5]['refeicao'] = {}
         dia[str(diaint+2)][ementa+1]['refeicao'] = {}
         dia[str(diaint+2)][ementa+2]['refeicao'] = {}
         dia[str(diaint+2)][ementa+3]['refeicao'] = {}
         dia[str(diaint+2)][ementa+4]['refeicao '] = {}
         
-        dia[str(diaint+3)][ementa] = {}
+        
         dia[str(diaint+3)][ementa+1] = {}
         dia[str(diaint+3)][ementa+2] = {}
         dia[str(diaint+3)][ementa+3] = {}
-        dia[str(diaint+3)][ementa+4] = {}        
-        dia[str(diaint+3)][ementa]['tipo_prato'] = {}
+        dia[str(diaint+3)][ementa+4] = {}     
+        dia[str(diaint+3)][ementa+5] = {}   
+        dia[str(diaint+3)][ementa+5]['tipo_prato'] = {}
         dia[str(diaint+3)][ementa+1]['tipo_prato'] = {}
         dia[str(diaint+3)][ementa+2]['tipo_prato'] = {}
         dia[str(diaint+3)][ementa+3]['tipo_prato'] = {}
         dia[str(diaint+3)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diaint+3)][ementa]['calorias'] = {}
+        dia[str(diaint+3)][ementa+5]['calorias'] = {}
         dia[str(diaint+3)][ementa+1]['calorias'] = {}
         dia[str(diaint+3)][ementa+2]['calorias'] = {}
         dia[str(diaint+3)][ementa+3]['calorias'] = {}
         dia[str(diaint+3)][ementa+4]['calorias'] = {}
-        dia[str(diaint+3)][ementa]['refeicao'] = {}
+        dia[str(diaint+3)][ementa+5]['refeicao'] = {}
         dia[str(diaint+3)][ementa+1]['refeicao'] = {}
         dia[str(diaint+3)][ementa+2]['refeicao'] = {}
         dia[str(diaint+3)][ementa+3]['refeicao'] = {}
         dia[str(diaint+3)][ementa+4]['refeicao '] = {}
         
-        dia[str(diaint+4)][ementa] = {}
+        dia[str(diaint+4)][ementa+5] = {}
         dia[str(diaint+4)][ementa+1] = {}
         dia[str(diaint+4)][ementa+2] = {}
         dia[str(diaint+4)][ementa+3] = {}
         dia[str(diaint+4)][ementa+4] = {}        
-        dia[str(diaint+4)][ementa]['tipo_prato'] = {}
+        dia[str(diaint+4)][ementa+5]['tipo_prato'] = {}
         dia[str(diaint+4)][ementa+1]['tipo_prato'] = {}
         dia[str(diaint+4)][ementa+2]['tipo_prato'] = {}
         dia[str(diaint+4)][ementa+3]['tipo_prato'] = {}
         dia[str(diaint+4)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diaint+4)][ementa]['calorias'] = {}
+        dia[str(diaint+4)][ementa+5]['calorias'] = {}
         dia[str(diaint+4)][ementa+1]['calorias'] = {}
         dia[str(diaint+4)][ementa+2]['calorias'] = {}
         dia[str(diaint+4)][ementa+3]['calorias'] = {}
         dia[str(diaint+4)][ementa+4]['calorias'] = {}
-        dia[str(diaint+4)][ementa]['refeicao'] = {}
+        dia[str(diaint+4)][ementa+5]['refeicao'] = {}
         dia[str(diaint+4)][ementa+1]['refeicao'] = {}
         dia[str(diaint+4)][ementa+2]['refeicao'] = {}
         dia[str(diaint+4)][ementa+3]['refeicao'] = {}
@@ -180,9 +181,10 @@ for num in [2]:
         continue
       if len(line)==0:
         continue
-      if line in ignorar:
+      if line.strip() in ignorar:
         continue
-      if line in ignorar2:
+      if line.strip() in ignorar2:
+        print 'ignorar2 matched. comtinue...'
         continue      
       salta = False
       for word in ignorar2:
@@ -191,7 +193,7 @@ for num in [2]:
             break
       if salta == True:              
         continue   
-      
+
       if line.strip() in tipo_prato:
         numtipo_prato+=1
         #print line        
@@ -235,17 +237,24 @@ for num in [2]:
               
       #print 'dia',dia
        
-      if ementa == 6:
+      #if ementa > 5:
         #reset
-        ementa = 1
-        diaint +=1
-
-      print "str(diaint): %s, len: %r" % ( str(diaint), len(dia[str(diaint)]))
-      if len(dia[str(diaint)]) ==0:
-        dia[str(diaint)][ementa]= {}
-      if(len(dia[str(diaint)][ementa]) == 0):
-        dia[str(diaint)][ementa] = {}
-      dia[str(diaint)][ementa]['ementa'] = line
+        #ementa = 1
+        #diaint +=1
+        #diaint = (ementa/5) 
+      diaint = int(dedia)
+      if ementa >5:
+        diaint+=(ementa/5)
+        ementalinha= ementa % 5
+        if ementalinha == 0:
+          ementalinha=5 
+          diaint-=1
+        print '%d=%d/5'%(diaint,ementa)
+        print '%d=%d%%5'%(ementalinha,ementa)
+      else:
+        ementalinha = ementa
+      print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
+      dia[str(diaint)][ementalinha]['ementa'] = line
       
 print 'dia',dia
 #print 'map_tipo_prato',map_tipo_prato
@@ -253,33 +262,6 @@ print 'dia',dia
 #print 'numrefeicao',numrefeicao
 
 
-teste_map1 = {'14':{'linha1':{'refeicao':'sopa','calorias':139, 'tipo_prato':'sopa','ementa':'Feijão-verde'},
-                   'linha2':{'refeicao':'peixe','ementa':'Pataniscas de Bacalhau e Arroz de Tomate', 'calorias':738,'tipo_prato':'frito'},
-                   'linha3':{'refeicao':'CARNE','ementa':'Pá de Porco à Padeiro, Arroz de Forno e Caldo Verde', 'calorias':683,'tipo_prato':'Assado'},
-                   'linha4':{'refeicao':'DIETA','ementa':'Espetada de Aves Grelhada, Molho de Limão e Esparguete', 'calorias':706,'tipo_prato':'Grelhado'},
-                   'linha5':{'refeicao':'OPÇÃO','ementa':'Lasanha de Espinafres', 'calorias':702,'tipo_prato':'Assado'}
-                  },
-             '16':{'linha1':{'refeicao':'sopa','calorias':127, 'tipo_prato':'sopa','ementa':'Nabiças c/ Massinhas'},
-                   'linha2':{'refeicao':'peixe','ementa':'Solha à Delicia c/ Banana e Puré', 'calorias':593,'tipo_prato':'Assado'},
-                   'linha3':{'refeicao':'CARNE','ementa':'Saltaricos de Carne de Porco c/ Pickles e Cogumelos', 'calorias':804,'tipo_prato':'Assado'},
-                   'linha4':{'refeicao':'DIETA','ementa':'Borrego Estufado ao Natural e Arroz Branco', 'calorias':544,'tipo_prato':'Estufado'},
-                   'linha5':{'refeicao':'OPÇÃO','ementa':'Strudel de Legumes', 'calorias':746,'tipo_prato':'Assado'}
-                  }
-            }
-
-teste_map = {'14':{'1':{'refeicao1':'sopa','calorias1':139, 'tipo_prato1':'sopa','ementa1':'Feijão-verde'},
-                   '2':{'refeicao2':'peixe','ementa2':'Pataniscas de Bacalhau e Arroz de Tomate', 'calorias2':738,'tipo_prato2':'frito'},
-                   '3':{'refeicao3':'CARNE','ementa3':'Pá de Porco à Padeiro, Arroz de Forno e Caldo Verde', 'calorias3':683,'tipo_prato3':'Assado'},
-                   '4':{'refeicao4':'DIETA','ementa4':'Espetada de Aves Grelhada, Molho de Limão e Esparguete', 'calorias4':706,'tipo_prato4':'Grelhado'},
-                   '5':{'refeicao5':'OPÇÃO','ementa5':'Lasanha de Espinafres', 'calorias5':702,'tipo_prato':'Assado'}
-                  },
-             '16':{'1':{'refeicao':'sopa','calorias':127, 'tipo_prato':'sopa','ementa':'Nabiças c/ Massinhas'},
-                   '2':{'refeicao':'peixe','ementa':'Solha à Delicia c/ Banana e Puré', 'calorias':593,'tipo_prato':'Assado'},
-                   '3':{'refeicao':'CARNE','ementa':'Saltaricos de Carne de Porco c/ Pickles e Cogumelos', 'calorias':804,'tipo_prato':'Assado'},
-                   '4':{'refeicao':'DIETA','ementa':'Borrego Estufado ao Natural e Arroz Branco', 'calorias':544,'tipo_prato':'Estufado'},
-                   '5':{'refeicao':'OPÇÃO','ementa':'Strudel de Legumes', 'calorias':746,'tipo_prato':'Assado'}
-                  }
-            }            
 
 #print teste_map['14']['5']
 #teste_map['14']['5']['tipo_prato'] = 'udpated'
