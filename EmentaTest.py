@@ -244,19 +244,22 @@ for num in [2]:
         #diaint +=1
         #diaint = (ementa/5) 
       diaint = int(dedia)
+      shift_feriado =0
       if ementa >5:
         diaint+=(ementa/5)
-        while True:
-          diaint += shift_feriado
-          if date(int(ano),int(ames), diaint) in feriados:
-            print '++++++ %d/%d/%d'%(int(ano),int(ames),diaint)
-            shift_feriado+=1
-          else:
-            break
+        print '%d=%d/5'%(diaint,ementa/5)
         ementalinha= ementa % 5
         if ementalinha == 0:
           ementalinha=5 
           diaint-=1
+        while True:
+          diaint += shift_feriado
+          if date(int(ano),int(ames), diaint) in feriados:
+            print '++++++ %d/%d/%d'%(int(ano),int(ames),diaint)
+            #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
+            shift_feriado+=1
+          else:
+            break
         print '%d=%d/5'%(diaint,ementa)
         print '%d=%d%%5'%(ementalinha,ementa)
       else:
