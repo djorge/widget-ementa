@@ -7,16 +7,51 @@ import re
 import sys
 import holidays
 from datetime import date
-#for ios
-#csv_file = codecs.open(file_to_open,'r','utf-8')
-#for windows
-#csv_file = open(file_to_open)
-#print(csv_file.read())
+
 map_tipo_prato ={'Frito':0,'Assado':0, 'Grelhado':0 , 'Cozido':0, 'Gratin':0, 'Estufado':0}
 tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin', 'Estufado']
 #prato = ['SOPA','PEIXE', 'CARNE' , 'DIETA', 'OPCAO']
 map_refeicao ={'SOPA':0,'PEIXE':0, 'CARNE':0 , 'DIETA':0, 'OPÇÃO':0}
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
+
+def get_dia(diaint,mes,ano,item):
+  '''
+  item pode ser ementa, refeicao, tipo
+  retorna tuplo com dia a usar e numero de linha onde colocar o item
+  Faz a correcao para o caso de ser feriado
+  '''
+  print 'get_dia(%d,%s,%s,%s)'%(diaint,mes,ano,item)
+  if item >5:
+    shift_feriado=0
+    diaint+=(item/5)
+    print '%d=%d/5'%(diaint,item/5)
+    itemlinha= item % 5
+    if itemlinha == 0:
+      itemlinha=5 
+      diaint-=1
+    while True:
+      diaint += shift_feriado
+      if date(int(ano),int(mes), diaint) in feriados:
+        print '++++++ %d/%d/%d'%(int(ano),int(mes),diaint)
+        #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
+        shift_feriado+=1
+      else:
+        break
+    print '%d=%d/5'%(diaint,item)
+    print '%d=%d%%5'%(itemlinha,item)
+  else:
+    itemlinha = item
+  '''if item in tipo_prato:
+    if itemlinha==1:
+      itemlinha '''
+  return (diaint,itemlinha)
+  
+#for ios
+#csv_file = codecs.open(file_to_open,'r','utf-8')
+#for windows
+#csv_file = open(file_to_open)
+#print(csv_file.read())
+
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
 crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, 
 frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de 
@@ -200,10 +235,10 @@ for num in [2]:
         #print line        
         for x in tipo_prato: 
             if line.strip() == x:   
+                diaint = int(dedia)
+                (diaint,numtipo_prato)=get_dia(diaint,ames,ano,numtipo_prato) 
                 print "dia[%d][%d]['tipo_prato']"%(diaint, numtipo_prato)
                 dia[str(diaint)][numtipo_prato]['tipo_prato'] = line
-        if numtipo_prato ==5:
-            numtipo_prato=0
         continue
         
       if line.strip() in refeicao:
@@ -244,6 +279,8 @@ for num in [2]:
         #diaint +=1
         #diaint = (ementa/5) 
       diaint = int(dedia)
+      (diaint,ementalinha)=get_dia(diaint,ames,ano,ementa)
+      '''
       shift_feriado =0
       if ementa >5:
         diaint+=(ementa/5)
@@ -263,7 +300,7 @@ for num in [2]:
         print '%d=%d/5'%(diaint,ementa)
         print '%d=%d%%5'%(ementalinha,ementa)
       else:
-        ementalinha = ementa
+        ementalinha = ementa'''
       
       print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
       dia[str(diaint)][ementalinha]['ementa'] = line
