@@ -14,20 +14,24 @@ tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin', 'Estufado']
 map_refeicao ={'SOPA':0,'PEIXE':0, 'CARNE':0 , 'DIETA':0, 'OPÇÃO':0}
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 
-def get_dia(diaint,mes,ano,item):
+def get_dia(diaint,mes,ano,item_count,item):
   '''
   item pode ser ementa, refeicao, tipo
   retorna tuplo com dia a usar e numero de linha onde colocar o item
   Faz a correcao para o caso de ser feriado
   '''
-  print 'get_dia(%d,%s,%s,%s)'%(diaint,mes,ano,item)
-  if item >5:
+  print 'get_dia(%d,%s,%s,%d,%s)'%(diaint,mes,ano,item_count,item)
+  item_max = 5
+  if item in tipo_prato:
+    item_max =4
+
+  if item_count > item_max:
     shift_feriado=0
-    diaint+=(item/5)
-    print '%d=%d/5'%(diaint,item/5)
-    itemlinha= item % 5
+    diaint+=(item_count/item_max)
+    print '%d=%d'%(diaint,item_count/item_max)
+    itemlinha= item_count % item_max
     if itemlinha == 0:
-      itemlinha=5 
+      itemlinha= item_max
       diaint-=1
     while True:
       diaint += shift_feriado
@@ -37,13 +41,12 @@ def get_dia(diaint,mes,ano,item):
         shift_feriado+=1
       else:
         break
-    print '%d=%d/5'%(diaint,item)
-    print '%d=%d%%5'%(itemlinha,item)
+    print '%d=%d/%d'%(diaint,item_count, item_max)
+    print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   else:
-    itemlinha = item
-  '''if item in tipo_prato:
-    if itemlinha==1:
-      itemlinha '''
+    itemlinha = item_count
+  if item in tipo_prato:
+    itemlinha+=1
   return (diaint,itemlinha)
   
 #for ios
@@ -212,6 +215,7 @@ for num in [2]:
         dia[str(diaint+4)][ementa+4]['refeicao '] = {}
     
     for line in textPage.split('\n'):
+      line = line.strip()
       print "->",line
       if len(line.strip()) == 1:
         continue
@@ -232,13 +236,11 @@ for num in [2]:
 
       if line.strip() in tipo_prato:
         numtipo_prato+=1
-        #print line        
-        for x in tipo_prato: 
-            if line.strip() == x:   
-                diaint = int(dedia)
-                (diaint,numtipo_prato)=get_dia(diaint,ames,ano,numtipo_prato) 
-                print "dia[%d][%d]['tipo_prato']"%(diaint, numtipo_prato)
-                dia[str(diaint)][numtipo_prato]['tipo_prato'] = line
+        print line          
+        diaint = int(dedia)
+        (diaint,numtipo_prato)=get_dia(diaint,ames,ano,numtipo_prato,line)
+        print "dia[%d][%d]['tipo_prato']"%(diaint, numtipo_prato)
+        dia[str(diaint)][numtipo_prato]['tipo_prato'] = line
         continue
         
       if line.strip() in refeicao:
@@ -279,7 +281,7 @@ for num in [2]:
         #diaint +=1
         #diaint = (ementa/5) 
       diaint = int(dedia)
-      (diaint,ementalinha)=get_dia(diaint,ames,ano,ementa)
+      (diaint,ementalinha)=get_dia(diaint,ames,ano,ementa,line)
       '''
       shift_feriado =0
       if ementa >5:
