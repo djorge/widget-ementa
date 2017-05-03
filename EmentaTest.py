@@ -5,30 +5,36 @@
 import datetime
 import re
 import sys
-import holidays
+#import holidays
 from datetime import date
+import json
+import shelve
+import os
 
+shift_feriado=0
+dias_feriado =[]
 map_tipo_prato ={'Frito':0,'Assado':0, 'Grelhado':0 , 'Cozido':0, 'Gratin':0, 'Estufado':0}
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin', 'Estufado']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado']
 #prato = ['SOPA','PEIXE', 'CARNE' , 'DIETA', 'OPCAO']
 map_refeicao ={'SOPA':0,'PEIXE':0, 'CARNE':0 , 'DIETA':0, 'OPÇÃO':0}
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 
+feriados =[date(2017,4,15), date(2017,5,25)]
 def get_dia(diaint,mes,ano,item_count,item):
   '''
   item pode ser ementa, refeicao, tipo
   retorna tuplo com dia a usar e numero de linha onde colocar o item
   Faz a correcao para o caso de ser feriado
   '''
+  global shift_feriado
   print 'get_dia(%d,%s,%s,%d,%s)'%(diaint,mes,ano,item_count,item)
   item_max = 5
   if item in tipo_prato:
     item_max =4
 
   if item_count > item_max:
-    shift_feriado=0
     diaint+=(item_count/item_max)
-    print '%d=%d'%(diaint,item_count/item_max)
+    print '%d=(%d/%d)=%d'%(diaint,diaint,item_count, item_count/item_max)
     itemlinha= item_count % item_max
     if itemlinha == 0:
       itemlinha= item_max
@@ -36,7 +42,7 @@ def get_dia(diaint,mes,ano,item_count,item):
     while True:
       diaint += shift_feriado
       if date(int(ano),int(mes), diaint) in feriados:
-        print '++++++ %d/%d/%d'%(int(ano),int(mes),diaint)
+        print '++++++++++++++++++++ %d/%d/%d'%(int(ano),int(mes),diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
         shift_feriado+=1
       else:
@@ -55,6 +61,7 @@ def get_dia(diaint,mes,ano,item_count,item):
 #csv_file = open(file_to_open)
 #print(csv_file.read())
 
+shelve_file = shelve.open('data.dat')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
 crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, 
 frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de 
@@ -68,7 +75,7 @@ numementa=0
 decimal= 0
 ementa=0
 dia = {}
-feriados = holidays.Portugal()
+#feriados = holidays.Portugal()
 shift_feriado =0
 '''
 carne,assado, batatas, 509
@@ -80,16 +87,16 @@ carne,assado, batatas, 509
        'linha2':{'refeicao':'peixe','ementa':'Pataniscas de Bacalhau e Arroz de Tomate', 'calorias':738,'tipo_prato':'frito'}}}
 '''
 
-
 i =1
-for num in [2]:
+for num in [6]:
     file = 'page_' +str(num) + '.txt'
     pageFile = open(file)
     #pageFile = codecs.open(file,'r','utf-8')
 
     textPage= pageFile.read()    
     
-    hoje = datetime.datetime(2017,4,21)
+    hoje = datetime.datetime(2017,5,25)  
+    
     semana = re.compile(r'Semana de (\d\d)/(\d\d) a (\d\d)/(\d\d)/(\d\d\d\d)')
     dias = semana.search(textPage)
     
@@ -101,8 +108,9 @@ for num in [2]:
     de = datetime.datetime(int(ano),int(demes),int(dedia), 0, 0, 0)
     a = datetime.datetime(int(ano), int(ames), int(adia), 0, 0, 0)    
     diaint = int(dedia)
+    maxdia = diaint
     
-    if len(dia) == 0:
+    if str(diaint) not in dia.keys():        
         dia[str(diaint)]= {}
         dia[str(diaint+1)]= {}
         dia[str(diaint+2)]= {}
@@ -213,6 +221,7 @@ for num in [2]:
         dia[str(diaint+4)][ementa+2]['refeicao'] = {}
         dia[str(diaint+4)][ementa+3]['refeicao'] = {}
         dia[str(diaint+4)][ementa+4]['refeicao '] = {}
+        maxdia=diaint+4
     
     for line in textPage.split('\n'):
       line = line.strip()
@@ -238,26 +247,32 @@ for num in [2]:
         numtipo_prato+=1
         print line          
         diaint = int(dedia)
-        (diaint,numtipo_prato)=get_dia(diaint,ames,ano,numtipo_prato,line)
-        print "dia[%d][%d]['tipo_prato']"%(diaint, numtipo_prato)
-        dia[str(diaint)][numtipo_prato]['tipo_prato'] = line
+        (diaint,item_linha)=get_dia(diaint,ames,ano,numtipo_prato,line)
+        print "dia[%d][%d]['tipo_prato']"%(diaint,item_linha)
+        dia[str(diaint)][item_linha]['tipo_prato'] = line
         continue
         
       if line.strip() in refeicao:
         numrefeicao+=1
-        #print line
-        for x in refeicao: 
-            if line.strip() == x:       
-                dia[str(diaint)][numrefeicao]['refeicao'] = line
-        if numrefeicao ==5:
-            numrefeicao=0
+        diaint = int(dedia)
+        #print line 
+        (diaint,item_linha)=get_dia(diaint,ames,ano,numrefeicao,line)
+        print "dia[%d][%d]['refeicao']"%(diaint,item_linha)  
+        if diaint > maxdia:
+          '''refeicao tb existe em feriados
+           '''
+          print '%d (dia) > %d (maxdia)'%(diaint,maxdia)
+          continue
+          
+        dia[str(diaint)][item_linha]['refeicao'] = line
         continue
     
       if line.strip().isdigit():
         decimal+=1
-        dia[str(diaint)][decimal]['calorias'] = line
-        if decimal ==5:
-            decimal=0
+        diaint = int(dedia)
+        (diaint,item_linha)=get_dia(diaint,ames,ano,decimal,line)
+        print "dia[%d][%d]['calorias']"%(diaint,item_linha)  
+        dia[str(diaint)][item_linha]['calorias'] = line
         continue
  
       ementa+=1
@@ -307,16 +322,27 @@ for num in [2]:
       print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
       dia[str(diaint)][ementalinha]['ementa'] = line
       
+print'------------------------var dia'      
 print 'dia',dia
-#print 'map_tipo_prato',map_tipo_prato
-#print 'map_refeicao',map_refeicao
-#print 'numrefeicao',numrefeicao
+jsondata = dia
+json_data = json.dumps(dia)
+print'------------------------json_data'
+print 'json_data',json_data
+print'------------------------python_value'
+python_value = json.loads(json_data)
+print 'python_value ',python_value
+
+hoje = datetime.datetime(2017,4,25) 
+
+print 'keys',dia.keys()
+if str(hoje.day) in dia.keys():
+    print'Parsing não é necessário .'
+    
+else:
+    print'Parsing  é necessário.'
+
+shelve_file['dia'] = python_value
+shelve_file.close()
 
 
-
-#print teste_map['14']['5']
-#teste_map['14']['5']['tipo_prato'] = 'udpated'
-#print 'teste_map',teste_map
-#print '--------------'
-#print teste_map['14']['5']
-#print teste_map['16']['5'] 
+    
