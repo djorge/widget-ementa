@@ -11,12 +11,10 @@ import holidays
 from datetime import date
 import shelve
 import os
-
+export_text=False
 shift_feriado=0
 dias_feriado =[]
-map_tipo_prato ={'Frito':0,'Assado':0, 'Grelhado':0 , 'Cozido':0, 'Gratin':0, 'Estufado':0}
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado']
-map_refeicao ={'SOPA':0,'PEIXE':0, 'CARNE':0 , 'DIETA':0, 'OPÇÃO':0}
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
@@ -43,14 +41,14 @@ def get_dia(diaint,mes,ano,item_count,item):
   Faz a correcao para o caso de ser feriado
   '''
   global shift_feriado
-  print 'get_dia(%d,%s,%s,%d,%s)'%(diaint,mes,ano,item_count,item)
+  print 'get_dia(%d,%s,%s,%d, %s)'%(diaint,mes,ano,item_count,item)
   item_max = 5
   if item in tipo_prato:
     item_max =4
 
   if item_count > item_max:
     diaint+=(item_count/item_max)
-    print '%d=(%d/%d)=%d'%(diaint,diaint,item_count, item_count/item_max)
+    print '%d=(%d/%d)=%d'%(diaint,item_count,item_max, item_count/item_max)
     itemlinha= item_count % item_max
     if itemlinha == 0:
       itemlinha= item_max
@@ -98,11 +96,13 @@ feriados = holidays.Portugal() #
 print date(2017, 4, 14) in feriados # True
 for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
   if pagenum != 4:
-    continue
+    #continue
+    pass
+
   print('page-----------'+str(pagenum))
   page=[pagenum]
   textPage = convert(file1, page)
-  if len(text) == 0:
+  if len(textPage) == 0 or 'Alfragide'   not in textPage:
     continue
   #print(text)
  # hoje = datetime.datetime.now()
@@ -121,7 +121,14 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
   diaint = int(dedia)
   maxdia = diaint
     
-  if str(diaint) not in dia.keys():        
+  if str(diaint) not in dia.keys(): 
+      #reset counters
+      shift_feriado=0
+      numtipo_prato=0
+      decimal=0
+      ementa=0
+      numrefeicao=0
+             
       dia[str(diaint)]= {}
       dia[str(diaint+1)]= {}
       dia[str(diaint+2)]= {}
@@ -233,10 +240,16 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       dia[str(diaint+4)][ementa+3]['refeicao'] = {}
       dia[str(diaint+4)][ementa+4]['refeicao '] = {}
       maxdia=diaint+4
+      
     
   for line in textPage.split('\n'):
     line = line.strip()
-    print "->",line
+    
+    if export_text == True:
+      print line
+      continue
+    else:
+      print "->",line
     if len(line.strip()) == 1:
       continue
     if len(line)==0:
@@ -315,14 +328,14 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       
 print'------------------------var dia'      
 print 'dia',dia
-jsondata = dia
+'''jsondata = dia
 json_data = json.dumps(dia)
 print'------------------------json_data'
 print 'json_data',json_data
 print'------------------------python_value'
 python_value = json.loads(json_data)
 print 'python_value ',python_value
-
+'''
 hoje = datetime.datetime(2017,4,25) 
 
 print 'keys',dia.keys()
@@ -332,7 +345,7 @@ if str(hoje.day) in dia.keys():
 else:
     print'Parsing  é necessário.'
 
-shelve_file['dia'] = python_value
+#shelve_file['dia'] = python_value
 shelve_file.close()
 
 
