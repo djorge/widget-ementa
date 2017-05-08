@@ -11,7 +11,10 @@ import holidays
 from datetime import date
 import shelve
 import os
-export_text=False
+import dialogs
+
+last_ementa=None
+export_text=True
 shift_feriado=0
 dias_feriado =[]
 tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.']
@@ -89,7 +92,12 @@ def convert(fname, pages=None):
   text = output.getvalue()
   output.close()
   return text
+  
+def get_pdf_from_user():
+    pdf_files = [f for f in os.listdir(os.curdir) if f.endswith('.pdf')]
+    return dialogs.list_dialog(title='pdf de ementa', items=pdf_files)
 
+filename = get_pdf_from_user()
 file1 = 'ementaSIBS.pdf'
 file2='ementaSIBScomferiadoaumaquarta.pdf'
 feriados = holidays.Portugal() #
@@ -299,6 +307,9 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       dia[str(diaint)][item_linha]['calorias'] = line
       continue
 
+    if last_ementa == line:
+      '''duplicado, bug do parser'''
+      continue
     ementa+=1
     
     '''if len(dia.keys()) == 0:
@@ -325,6 +336,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
     
     print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
     dia[str(diaint)][ementalinha]['ementa'] = line
+    last_ementa = line
       
 print'------------------------var dia'      
 print 'dia',dia
