@@ -1,4 +1,5 @@
 # -*- coding: utf-8
+
 from cStringIO import StringIO
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import TextConverter
@@ -133,7 +134,7 @@ def parseLine(line):
       diaint = int(dedia)
       (diaint,item_linha)=get_dia(diaint,demes,ano,numtipo_prato,line)
       print "dia[%d][%d]['tipo_prato']"%(diaint,item_linha)
-      dia[str(diaint)][item_linha]['tipo_prato'] = line
+      dia[str(diaint)][item_linha]['tipo_prato'] = line.decode('utf-8')
       return
       
     if line.strip() in refeicao:
@@ -148,7 +149,7 @@ def parseLine(line):
         print '%d (dia) > %d (maxdia)'%(diaint,maxdia)
         return
         
-      dia[str(diaint)][item_linha]['refeicao'] = line
+      dia[str(diaint)][item_linha]['refeicao'] = line.decode('utf-8')
       return
   
     if line.strip().isdigit():
@@ -156,7 +157,7 @@ def parseLine(line):
       diaint = int(dedia)
       (diaint,item_linha)=get_dia(diaint,demes,ano,decimal,line)
       print "dia[%d][%d]['calorias']"%(diaint,item_linha)  
-      dia[str(diaint)][item_linha]['calorias'] = line
+      dia[str(diaint)][item_linha]['calorias'] = line.decode('utf-8')
       return
 
     if last_ementa == line:
@@ -169,7 +170,7 @@ def parseLine(line):
     
     
     print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
-    dia[str(diaint)][ementalinha]['ementa'] = line
+    dia[str(diaint)][ementalinha]['ementa'] = line.decode('utf-8')
     last_ementa = line
   
 def get_pdf_from_user():
@@ -286,7 +287,7 @@ if str(hoje.day) in dia.keys():
 else:
     print'Parsing  é necessário.'
 
-#shelve_file['dia'] = python_value
+shelve_file['dia'] = dia
 shelve_file.close()
 
 
