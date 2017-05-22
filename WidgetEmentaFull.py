@@ -35,13 +35,11 @@ class EmentaView (ui.View):
   def __init__(self, dia, *args, **kwargs):
     super().__init__(self, *args, **kwargs)
     self.dia=dia
-    hoje = datetime.datetime.now()
-    self.day=hoje.day
+    self.hoje = datetime.datetime.now()
     #self.day=19
-    self.month=hoje.month
-    self.year=hoje.year
     #hoje.day
     self.labels = []
+    self.dia_sem_lookup = ('Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo')
     
     linex1=4
     liney1=0.
@@ -54,33 +52,33 @@ class EmentaView (ui.View):
     self.bounds = (0, 0, 500, 220)
     
     self.line1lbl=self.make_label('tr',(linex1, liney1, linex2, liney2),2, lb_break_mode )
-    self.line1lbl.text = self.dia[str(self.day)][1]['ementa']
+    self.line1lbl.text = self.dia[str(self.hoje.day)][1]['ementa']
     self.display_view.add_subview(self.line1lbl)
     
     line1lbl=self.line1lbl
 
     #line2
     self.line2lbl= self.make_label('tr',frame=(linex1,line1lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line2lbl.text = self.dia[str(self.day)][2]['ementa']
+    self.line2lbl.text = self.dia[str(self.hoje.day)][2]['ementa']
     
     line2lbl=self.line2lbl
     self.display_view.add_subview(line2lbl)
 
     #line3
     self.line3lbl= self.make_label('tr',frame=(linex1, line2lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line3lbl.text = self.dia[str(self.day)][3]['ementa']
+    self.line3lbl.text = self.dia[str(self.hoje.day)][3]['ementa']
     line3lbl=self.line3lbl
     self.display_view.add_subview(line3lbl)
 
     #line4
     self.line4lbl= self.make_label('tr',frame=(linex1, line3lbl.y+line3lbl.height+ linesep,linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line4lbl.text = self.dia[str(self.day)][4]['ementa']
+    self.line4lbl.text = self.dia[str(self.hoje.day)][4]['ementa']
     line4lbl=self.line4lbl
     self.display_view.add_subview(line4lbl)
 
     #line5
     self.line5lbl = self.make_label('tr',frame=(linex1, line4lbl.y+line4lbl.height+ linesep,linex2, line1lbl.height) ,nlines=2,lb =lb_break_mode)
-    self.line5lbl.text = self.dia[str(self.day)][5]['ementa']
+    self.line5lbl.text = self.dia[str(self.hoje.day)][5]['ementa']
     line5lbl=self.line5lbl
     self.display_view.add_subview(line5lbl)
     self.add_subview(self.display_view)
@@ -90,7 +88,10 @@ class EmentaView (ui.View):
     self.labels.append(line4lbl)
     self.labels.append(line5lbl)
     
-    self.dia_em=ui.Label('wh',frame=(0, self.line5lbl.y+self.line5lbl.height+linesep, 300, 32),font=('HelveticaNeue-Light', 32), alignment=ui.ALIGN_CENTER,text=str(self.day))
+    self.dia_semana=ui.Label('wh',frame=(0, self.line5lbl.y+self.line5lbl.height, 300, 16),font=('HelveticaNeue-Light', 14), alignment=ui.ALIGN_CENTER,text=str(self.dia_sem_lookup[self.hoje.weekday()]))
+    self.display_view.add_subview(self.dia_semana)
+    self.dia_semana.hidden=True
+    self.dia_em=ui.Label('wh',frame=(0, self.line5lbl.y+self.line5lbl.height+linesep, 300, 32),font=('HelveticaNeue-Light', 32), alignment=ui.ALIGN_CENTER,text=str(self.hoje.day))
     self.add_subview(self.dia_em)
     self.dia_em.hidden=True
     
@@ -129,9 +130,9 @@ class EmentaView (ui.View):
       lbl.line_break_mode = lb_break_mode
       lbl.font = ('Menlo', tamfonte)
       if self.compact:
-        lbl.text = self.dia[str(self.day)][i+1]['ementa']
+        lbl.text = self.dia[str(self.hoje.day)][i+1]['ementa']
       else:
-        lbl.text = self.dia[str(self.day)][i+1]['refeicao']+ '|'+self.dia[str(self.day)][i+1]['ementa']+'|'+str(self.dia[str(self.day)][i+1]['calorias'])
+        lbl.text = self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])
       if i == 0:
         continue
       
@@ -139,40 +140,37 @@ class EmentaView (ui.View):
       prev_y=lbl.y
     if not self.compact:
       self.dia_em.y= line5lbl.y+self.line5lbl.height+linesep*8
+      self.dia_semana.y=line5lbl.y+line5lbl.height+linesep
       self.dia_em.hidden=False
       self.plus_btn.hidden=False
       self.minus_btn.hidden=False
-      self.dia_em.text=str(self.day)
+      self.dia_em.text=str(self.hoje.day)
+      self.dia_semana.hidden = False
     else:
       self.dia_em.hidden=True
       self.minus_btn.hidden=True
       self.plus_btn.hidden=True
+      self.dia_semana.hidden = True
   
   def button_tapped(self,sender):
-    dt = datetime.datetime(self.year, self.month, self.day)
     if sender.name=='+':
-      dt+=datetime.timedelta(days=1)
+      self.hoje +=datetime.timedelta(days=1)
     elif sender.name=='-':
-      dt-=datetime.timedelta(days=1)  
-    self.day=dt.day
-    self.month=dt.month
-    self.year=dt.year
+      self.hoje-=datetime.timedelta(days=1)  
     self.update_view()
     
   def update_view(self):
-    self.dia_em.text=str(self.day)
+    self.dia_em.text=str(self.hoje.day)
+    self.dia_semana.text=self.dia_sem_lookup[self.hoje.weekday()]
+  
     for i, lbl in enumerate(self.labels):
-      if str(self.day) not in self.dia.keys():
+      if str(self.hoje.day) not in self.dia.keys():
         lbl.text='Não há ementa'
       else:
-        lbl.text = self.dia[str(self.day)][i+1]['refeicao']+ '|'+self.dia[str(self.day)][i+1]['ementa']+'|'+str(self.dia[str(self.day)][i+1]['calorias'])
-    #line2lbl.y=line1lbl.y+line1lbl.height+ linesep
-    #line3lbl.y=line2lbl.y+line1lbl.height+ linesep
-    #line4lbl.y=line3lbl.y+line1lbl.height+ linesep
-    #line5lbl.y=line4lbl.y+line1lbl.height+ linesep
-    
-
-
+        print('--')
+        print(self.dia[str(self.hoje.day)])
+        lbl.text = self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+      
 
 def main():
   shelve_file  = shelve.open('data')
