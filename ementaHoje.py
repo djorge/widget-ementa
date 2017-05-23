@@ -78,7 +78,22 @@ def get_dia(diaint,mes,ano,item_count,item):
     print '%d=%d/%d'%(diaint,item_count, item_max)
     print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   else:
+    dt = datetime.datetime(int(ano), int(mes), diaint)
+    while True:
+      dt+= datetime.timedelta(days=shift_feriado)
+      diaint = dt.day
+      mesint = dt.month
+      #diaint += shift_feriado
+      if date(int(ano),mesint, diaint) in feriados:
+        print '++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
+        #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
+        shift_feriado+=1
+      else:
+        break
     itemlinha = item_count
+    
+    print '%d=%d'%(diaint,item_count)
+    print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   if item in tipo_prato:
     itemlinha+=1
   return (diaint,itemlinha)
@@ -127,7 +142,11 @@ def parseLine(line):
           break
     if salta == True:              
       return   
-
+    if last_ementa == line:
+      '''duplicado, bug do parser pdf'''
+      print('line duplicated')
+      return
+    last_ementa=line
     if line.strip() in tipo_prato:
       numtipo_prato+=1
       print line          
@@ -160,9 +179,9 @@ def parseLine(line):
       dia[str(diaint)][item_linha]['calorias'] = line.decode('utf-8')
       return
 
-    if last_ementa == line:
+    #if last_ementa == line:
       '''duplicado, bug do parser pdf'''
-      return
+      #return
     ementa+=1
     
     diaint = int(dedia)
@@ -171,7 +190,7 @@ def parseLine(line):
     
     print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
     dia[str(diaint)][ementalinha]['ementa'] = line.decode('utf-8')
-    last_ementa = line
+    #last_ementa = line
   
 def get_pdf_from_user():
     pdf_files = [f for f in os.listdir(os.curdir) if f.endswith('.pdf')]
@@ -183,7 +202,7 @@ file2='ementaSIBScomferiadoaumaquarta.pdf'
 feriados = holidays.Portugal() #
 print date(2017, 4, 14) in feriados # True
 for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
-  if pagenum != 4:
+  if pagenum !=0 :
     #continue
     pass
 
@@ -243,7 +262,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
         dia[str(diai)][ementa+1]['refeicao'] = {}
         dia[str(diai)][ementa+2]['refeicao'] = {}
         dia[str(diai)][ementa+3]['refeicao'] = {}
-        dia[str(diai)][ementa+4]['refeicao '] = {}
+        dia[str(diai)][ementa+4]['refeicao'] = {}
         dia[str(diai)][ementa+5]['refeicao'] = {}
         
         maxdia=diai
@@ -251,6 +270,9 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
     
   for line in textPage.split('\n'):
     line = line.strip()
+    if export_text == True:
+      print line
+      continue
     '''bug do parser quando retorna por exemplo Grelhado 721'''    
     if len(line.split(' '))== 2:
         tempAr = line.split(' ')
@@ -258,18 +280,13 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
             parseLine(tempAr[0])
             parseLine(tempAr[1])
             continue
-            
-    if export_text == True:
-      print line
-      continue
-    else:
-      print "->",line
+    print "->",line
     
     parseLine(line)
     
       
 print'------------------------var dia'      
-print 'dia',dia
+ print 'dia',dia
 '''jsondata = dia
 json_data = json.dumps(dia)
 print'------------------------json_data'
@@ -278,14 +295,6 @@ print'------------------------python_value'
 python_value = json.loads(json_data)
 print 'python_value ',python_value
 '''
-hoje = datetime.datetime(2017,4,25) 
-
-print 'keys',dia.keys()
-if str(hoje.day) in dia.keys():
-    print'Parsing não é necessário .'
-    
-else:
-    print'Parsing  é necessário.'
 
 shelve_file['dia'] = dia
 shelve_file.close()
