@@ -129,10 +129,15 @@ class EmentaView (ui.View):
       lbl.height = liney2
       lbl.line_break_mode = lb_break_mode
       lbl.font = ('Menlo', tamfonte)
+      ementa = self.dia[str(self.hoje.day)][i+1]['ementa']
       if self.compact:
-        lbl.text = self.dia[str(self.hoje.day)][i+1]['ementa']
+        lbl.text = ementa
       else:
-        lbl.text = self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+        refeicao = self.dia[str(self.hoje.day)][i+1]['refeicao']
+        calorias = str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+        refeicao =refeicao if len(refeicao) > 0 else ""
+        lbl.text = refeicao + '|' + ementa + '|' + calorias
+        '''self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])'''
       if i == 0:
         continue
       
@@ -168,15 +173,27 @@ class EmentaView (ui.View):
         lbl.text='Não há ementa'
       else:
         print('--')
-        print(self.dia[str(self.hoje.day)])
-        lbl.text = self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+        #print(self.dia[str(self.hoje.day)][i+1]['refeicao'])
+        refeicao = self.dia[str(self.hoje.day)][i+1]['refeicao']
+        ementa = self.dia[str(self.hoje.day)][i+1]['ementa']
+        calorias = str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+        refeicao =refeicao if len(refeicao) > 0 else ""
+        #print(len(refeicao))
+        #print(ementa)
+        #print(calorias)
+        #print('.')
+        lbl.text = refeicao + '|' + ementa + '|' + calorias
+        
+      '''self.dia[str(self.hoje.day)][i+1]['refeicao'] + '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])'''
       
 
 def main():
   shelve_file  = shelve.open('data')
   dia = shelve_file['dia']
   
+  print('=====dia=====')
   print ('dia',dia['19'])
+  print('=====keys====')
   print ('keys',dia.keys())
   
   #hoje = datetime.datetime(2017,5,15)
