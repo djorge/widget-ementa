@@ -190,8 +190,9 @@ def main():
   shelve_file  = shelve.open('data')
   dia = shelve_file['dia']
   
-  print('=====keys====')
-  print ('keys',dia.keys())
+  feriados = holidays.Portugal()
+  #print('=====keys====')
+  #print ('keys',dia.keys())
   
   #hoje = datetime.datetime(2017,5,15)
   shelve_file.close()
