@@ -28,7 +28,7 @@ line5text = 'ementa 5'
 
 dia = {}
 
-
+feriados = holidays.Portugal()
 
 class EmentaView (ui.View):
 
@@ -36,8 +36,7 @@ class EmentaView (ui.View):
     super().__init__(self, *args, **kwargs)
     self.dia=dia
     self.hoje = datetime.datetime.now()
-    #self.day=19
-    #hoje.day
+
     self.labels = []
     self.dia_sem_lookup = ('Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo')
     
@@ -51,34 +50,37 @@ class EmentaView (ui.View):
     self.display_view = ui.View(frame=(0, 0, 320, 220))
     self.bounds = (0, 0, 500, 220)
     
+    self.diaidx = str(self.hoje.year) + str(self.hoje.month)+ str(self.hoje.day)
+    
     self.line1lbl=self.make_label('tr',(linex1, liney1, linex2, liney2),2, lb_break_mode )
-    self.line1lbl.text = self.dia[str(self.hoje.day)][1]['ementa']
+    #self.line1lbl.text = self.dia[self.diaidx][1]['ementa']
     self.display_view.add_subview(self.line1lbl)
     
     line1lbl=self.line1lbl
 
+    
     #line2
     self.line2lbl= self.make_label('tr',frame=(linex1,line1lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line2lbl.text = self.dia[str(self.hoje.day)][2]['ementa']
+    #self.line2lbl.text = self.dia[self.diaidx][2]['ementa']
     
     line2lbl=self.line2lbl
     self.display_view.add_subview(line2lbl)
 
     #line3
     self.line3lbl= self.make_label('tr',frame=(linex1, line2lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line3lbl.text = self.dia[str(self.hoje.day)][3]['ementa']
+    #self.line3lbl.text = self.dia[self.diaidx][3]['ementa']
     line3lbl=self.line3lbl
     self.display_view.add_subview(line3lbl)
 
     #line4
     self.line4lbl= self.make_label('tr',frame=(linex1, line3lbl.y+line3lbl.height+ linesep,linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    self.line4lbl.text = self.dia[str(self.hoje.day)][4]['ementa']
+    #self.line4lbl.text = self.dia[self.diaidx][4]['ementa']
     line4lbl=self.line4lbl
     self.display_view.add_subview(line4lbl)
 
     #line5
     self.line5lbl = self.make_label('tr',frame=(linex1, line4lbl.y+line4lbl.height+ linesep,linex2, line1lbl.height) ,nlines=2,lb =lb_break_mode)
-    self.line5lbl.text = self.dia[str(self.hoje.day)][5]['ementa']
+    #self.line5lbl.text = self.dia[self.diaidx][5]['ementa']
     line5lbl=self.line5lbl
     self.display_view.add_subview(line5lbl)
     self.add_subview(self.display_view)
@@ -101,7 +103,7 @@ class EmentaView (ui.View):
     self.plus_btn = ui.Button(name='+', image=ui.Image('iow:ios7_plus_outline_32'), flex='hl', tint_color='#666', action=self.button_tapped)
     self.plus_btn.frame = (320-110,self.display_view.bounds.height-60 , 64, 64)
     self.display_view.add_subview(self.plus_btn)
-  
+    self.update_view()
   def make_label(self,pos,frame, nlines,lb):
     tamfonte = 12
     return ui.Label(flex=pos,frame=frame,font = ('Menlo', tamfonte), number_of_lines = nlines, background_color=(0.9,0.9, .9),border_color=(.5, .5, .5), line_break_mode=lb,border_width=1, corner_radius=5)
@@ -129,17 +131,9 @@ class EmentaView (ui.View):
       lbl.height = liney2
       lbl.line_break_mode = lb_break_mode
       lbl.font = ('Menlo', tamfonte)
-      ementa = self.dia[str(self.hoje.day)][i+1]['ementa']
-      if self.compact:
-        lbl.text = ementa
-      else:
-        refeicao = self.dia[str(self.hoje.day)][i+1]['refeicao']
-        calorias = str(self.dia[str(self.hoje.day)][i+1]['calorias'])
-        refeicao =refeicao if len(refeicao) > 0 else ""
-        lbl.text = refeicao + '|' + ementa + '|' + calorias
-        '''self.dia[str(self.hoje.day)][i+1]['refeicao']+ '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])'''
       if i == 0:
         continue
+        
       
       lbl.y=prev_y+line1lbl.height+ linesep
       prev_y=lbl.y
@@ -162,6 +156,7 @@ class EmentaView (ui.View):
       self.hoje +=datetime.timedelta(days=1)
     elif sender.name=='-':
       self.hoje-=datetime.timedelta(days=1)  
+    self.diaidx = str(self.hoje.year) + str(self.hoje.month)+ str(self.hoje.day)
     self.update_view()
     
   def update_view(self):
@@ -169,37 +164,37 @@ class EmentaView (ui.View):
     self.dia_semana.text=self.dia_sem_lookup[self.hoje.weekday()]
   
     for i, lbl in enumerate(self.labels):
-      if str(self.hoje.day) not in self.dia.keys():
-        lbl.text='Não há ementa'
+      lbl.text=''
+      if self.diaidx not in self.dia.keys() or self.hoje in feriados:
+        lbl.text='Sem dados'
       else:
-        print('--')
-        #print(self.dia[str(self.hoje.day)][i+1]['refeicao'])
-        refeicao = self.dia[str(self.hoje.day)][i+1]['refeicao']
-        ementa = self.dia[str(self.hoje.day)][i+1]['ementa']
-        calorias = str(self.dia[str(self.hoje.day)][i+1]['calorias'])
+        #print('--')
+        #print(self.dia[str(self.hoje.day)][i+1]['refeicao']
+        #print(self.diaidx)
+        refeicao = self.dia[self.diaidx][i+1]['refeicao']
+        ementa = self.dia[self.diaidx][i+1]['ementa']
+        calorias = str(self.dia[self.diaidx][i+1]['calorias'])
         refeicao =refeicao if len(refeicao) > 0 else ""
         #print(len(refeicao))
         #print(ementa)
-        #print(calorias)
+        #print(len(calorias) is 0)
         #print('.')
-        lbl.text = refeicao + '|' + ementa + '|' + calorias
-        
-      '''self.dia[str(self.hoje.day)][i+1]['refeicao'] + '|'+self.dia[str(self.hoje.day)][i+1]['ementa']+'|'+str(self.dia[str(self.hoje.day)][i+1]['calorias'])'''
+        if len(refeicao) > 0:
+          lbl.text = refeicao + '|'
+        lbl.text+= ementa 
+        if calorias != '{}':
+          lbl.text+='|'+calorias
       
 
 def main():
   shelve_file  = shelve.open('data')
   dia = shelve_file['dia']
   
-  print('=====dia=====')
-  print ('dia',dia['19'])
   print('=====keys====')
   print ('keys',dia.keys())
   
   #hoje = datetime.datetime(2017,5,15)
   shelve_file.close()
-
-  
 
   # Optimization: Don't create a new view if the widget already shows the calculator.
   widget_name = __file__ + str(os.stat(__file__).st_mtime)
