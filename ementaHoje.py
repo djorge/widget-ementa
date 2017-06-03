@@ -47,30 +47,33 @@ def get_dia(diaint,mes,ano,item_count,item):
   Faz a correcao para o caso de ser feriado
   '''
   global shift_feriado
-  print 'get_dia(%d,%s,%s,%d, %s)'%(diaint,mes,ano,item_count,item)
+  print 'get_dia(%d,%d,%d,%d, %s)'%(diaint,mes,ano,item_count,item)
   item_max = 5
   if item in tipo_prato:
     item_max =4
 
   if item_count > item_max:   
     #diaint+=(item_count/item_max)
-    dt = datetime.datetime(int(ano), int(mes), diaint)+datetime.timedelta(days=item_count/item_max)
+    dt = datetime.datetime(ano, mes, diaint)+datetime.timedelta(days=item_count/item_max)
     diaint = dt.day
     mesint = dt.month
+    anoint = dt.year
     print '%d=(%d/%d)=%d'%(diaint,item_count,item_max, item_count/item_max)
     itemlinha= item_count % item_max
     if itemlinha == 0:
       itemlinha= item_max
       dt+=datetime.timedelta(days=-1)
       diaint = dt.day
+      anoint = dt.year
       #diaint-=1
     while True:
       dt+= datetime.timedelta(days=shift_feriado)
       diaint = dt.day
       mesint = dt.month
+      anoint = dt.year
       #diaint += shift_feriado
       if date(int(ano),mesint, diaint) in feriados:
-        print '++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
+        print ',1++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
         shift_feriado+=1
       else:
@@ -78,25 +81,26 @@ def get_dia(diaint,mes,ano,item_count,item):
     print '%d=%d/%d'%(diaint,item_count, item_max)
     print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   else:
-    dt = datetime.datetime(int(ano), int(mes), diaint)
+    dt = datetime.datetime(ano, mes, diaint)
     while True:
       dt+= datetime.timedelta(days=shift_feriado)
       diaint = dt.day
       mesint = dt.month
+      anoint = dt.year
       #diaint += shift_feriado
-      if date(int(ano),mesint, diaint) in feriados:
-        print '++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
+      if date(anoint,mesint, diaint) in feriados:
+        print '2++++++++++++++++++++ %d/%d/%d'%(ano,mesint,diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
         shift_feriado+=1
       else:
         break
     itemlinha = item_count
     
-    print '%d=%d'%(diaint,item_count)
+    print '%d%d%d=%d'%(diaint,mesint,anoint,item_count)
     print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   if item in tipo_prato:
     itemlinha+=1
-  return (diaint,itemlinha)
+  return (diaint,mesint,anoint,itemlinha)
 
 def convert(fname, pages=None):
   if not pages:
@@ -121,6 +125,12 @@ def convert(fname, pages=None):
   
 def parseLine(line):
     global numtipo_prato, decimal, ignorar, ignorar2, ignorar3, refeicao, diaint,ames,ano, numcaloria, numementa, numrefeicao, numtipo_prato, last_ementa, ementa
+    
+    print(demes)
+    
+    diaint = int(dedia)
+    mesint = int(demes)
+    anoint = int(ano)
     
     line = line.strip()
     if len(line.strip()) == 1:
@@ -150,33 +160,38 @@ def parseLine(line):
     if line.strip() in tipo_prato:
       numtipo_prato+=1
       print line          
-      diaint = int(dedia)
-      (diaint,item_linha)=get_dia(diaint,demes,ano,numtipo_prato,line)
-      print "dia[%d][%d]['tipo_prato']"%(diaint,item_linha)
-      dia[str(diaint)][item_linha]['tipo_prato'] = line.decode('utf-8')
+   
+      (diaint,mesint, anoint, item_linha)=get_dia(diaint,mesint,anoint,numtipo_prato,line)
+      diaidx = str(anoint) + str(mesint)+ str(diaint)
+      
+      print "dia[%s][%d]['tipo_prato']"%(diaidx,item_linha)
+      dia[diaidx][item_linha]['tipo_prato'] = line.decode('utf-8')
       return
       
     if line.strip() in refeicao:
       numrefeicao+=1
-      diaint = int(dedia)
       #print line 
-      (diaint,item_linha)=get_dia(diaint,demes,ano,numrefeicao,line)
-      print "dia[%d][%d]['refeicao']"%(diaint,item_linha)  
-      if diaint > maxdia:
+      (diaint,mesint, anoint, item_linha)=get_dia(diaint,mesint,anoint,numrefeicao,line)
+      diaidx = str(anoint) + str(mesint)+ str(diaint)
+      print "dia[%s][%d]['refeicao']"%(diaidx,item_linha)  
+      
+      if int(diaidx) > maxdia:
         '''refeicao tb existe em feriados
          '''
-        print '%d (dia) > %d (maxdia)'%(diaint,maxdia)
-        return
+        print '%s (dia) > %d (maxdia)'%(diaidx,maxdia)
+        return 
         
-      dia[str(diaint)][item_linha]['refeicao'] = line.decode('utf-8')
+      dia[diaidx][item_linha]['refeicao'] = line.decode('utf-8')
+      
       return
   
     if line.strip().isdigit():
       decimal+=1
-      diaint = int(dedia)
-      (diaint,item_linha)=get_dia(diaint,demes,ano,decimal,line)
-      print "dia[%d][%d]['calorias']"%(diaint,item_linha)  
-      dia[str(diaint)][item_linha]['calorias'] = line.decode('utf-8')
+      
+      (diaint,mesint, anoint, item_linha)=get_dia(diaint,mesint,anoint,decimal,line)
+      diaidx = str(anoint) + str(mesint)+ str(diaint)
+      print "dia[%s][%d]['calorias']"%(diaidx,item_linha)  
+      dia[diaidx][item_linha]['calorias'] = line.decode('utf-8')
       return
 
     #if last_ementa == line:
@@ -184,12 +199,12 @@ def parseLine(line):
       #return
     ementa+=1
     
-    diaint = int(dedia)
-    (diaint,ementalinha)=get_dia(diaint,demes,ano,ementa,line)
     
+    (diaint,mesint, anoint, ementalinha)=get_dia(diaint,mesint,anoint,ementa,line)
     
-    print "dia[%s][%d]['ementa']" % ( str(diaint), ementalinha)
-    dia[str(diaint)][ementalinha]['ementa'] = line.decode('utf-8')
+    diaidx = str(anoint) + str(mesint)+ str(diaint)
+    print "dia[%s][%d]['ementa']" % ( diaidx, ementalinha)
+    dia[diaidx][ementalinha]['ementa'] = line.decode('utf-8')
     #last_ementa = line
   
 def get_pdf_from_user():
@@ -226,9 +241,12 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
   de = datetime.datetime(int(ano),int(demes),int(dedia), 0, 0, 0)
   a = datetime.datetime(int(ano), int(ames), int(adia), 0, 0, 0)
   diaint = int(dedia)
-  maxdia = diaint
+  mesint = int(demes)
+  anoint = int(ano)
+  diaidx = ano + demes + dedia
+  maxdia = int(diaidx)
     
-  if str(diaint) not in dia.keys(): 
+  if diaidx not in dia.keys(): 
       #reset counters
       shift_feriado=0
       numtipo_prato=0
@@ -237,37 +255,39 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       numrefeicao=0
       
       for i in range(0,5):
-        dt = datetime.datetime(int(ano),+int(demes),diaint  )+datetime.timedelta(days=i)
-        diai = dt.day
+        dt = datetime.datetime(anoint,mesint,diaint  )+datetime.timedelta(days=i)
+        diai = str(dt.year) + str(dt.month) + str(dt.day)
+        print('->%s',diai)
       
-        dia[str(diai)]= {}        
-        dia[str(diai)][ementa+1] = {}
-        dia[str(diai)][ementa+2] = {}
-        dia[str(diai)][ementa+3] = {}
-        dia[str(diai)][ementa+4] = {}        
-        dia[str(diai)][ementa+5] = {}
+        dia[diai]= {}        
+        dia[diai][ementa+1] = {}
+        dia[diai][ementa+2] = {}
+        dia[diai][ementa+3] = {}
+        dia[diai][ementa+4] = {}        
+        dia[diai][ementa+5] = {}
         
-        dia[str(diai)][ementa+1]['tipo_prato'] = {}
-        dia[str(diai)][ementa+2]['tipo_prato'] = {}
-        dia[str(diai)][ementa+3]['tipo_prato'] = {}
-        dia[str(diai)][ementa+4]['tipo_prato'] = {}        
-        dia[str(diai)][ementa+5]['tipo_prato'] = {}
+        dia[diai][ementa+1]['tipo_prato'] = {}
+        dia[diai][ementa+2]['tipo_prato'] = {}
+        dia[diai][ementa+3]['tipo_prato'] = {}
+        dia[diai][ementa+4]['tipo_prato'] = {}        
+        dia[diai][ementa+5]['tipo_prato'] = {}
         
-        dia[str(diai)][ementa+1]['calorias'] = {}
-        dia[str(diai)][ementa+2]['calorias'] = {}
-        dia[str(diai)][ementa+3]['calorias'] = {}
-        dia[str(diai)][ementa+4]['calorias'] = {}
-        dia[str(diai)][ementa+5]['calorias'] = {}
+        dia[diai][ementa+1]['calorias'] = {}
+        dia[diai][ementa+2]['calorias'] = {}
+        dia[diai][ementa+3]['calorias'] = {}
+        dia[diai][ementa+4]['calorias'] = {}
+        dia[diai][ementa+5]['calorias'] = {}
         
-        dia[str(diai)][ementa+1]['refeicao'] = {}
-        dia[str(diai)][ementa+2]['refeicao'] = {}
-        dia[str(diai)][ementa+3]['refeicao'] = {}
-        dia[str(diai)][ementa+4]['refeicao'] = {}
-        dia[str(diai)][ementa+5]['refeicao'] = {}
+        dia[diai][ementa+1]['refeicao'] = {}
+        dia[diai][ementa+2]['refeicao'] = {}
+        dia[diai][ementa+3]['refeicao'] = {}
+        dia[diai][ementa+4]['refeicao'] = {}
+        dia[diai][ementa+5]['refeicao'] = {}
         
-        maxdia=diai
-      
-    
+        maxdia=int(diai)
+  
+  print('maxdia: %d',maxdia)    
+  print(dia.keys())
   for line in textPage.split('\n'):
     line = line.strip()
     if export_text == True:
@@ -286,7 +306,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
     
       
 print'------------------------var dia'      
- print 'dia',dia
+print 'dia',dia
 '''jsondata = dia
 json_data = json.dumps(dia)
 print'------------------------json_data'
