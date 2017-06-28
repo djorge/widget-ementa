@@ -14,6 +14,7 @@ import shelve
 import os
 import dialogs
 from datetime import timedelta
+import appex
 
 last_ementa=None
 export_text=False
@@ -126,12 +127,13 @@ def convert(fname, pages=None):
 def parseLine(line):
     global numtipo_prato, decimal, ignorar, ignorar2, ignorar3, refeicao, diaint,ames,ano, numcaloria, numementa, numrefeicao, numtipo_prato, last_ementa, ementa
     
-    print(demes)
+    #print(demes)
     
     diaint = int(dedia)
     mesint = int(demes)
     anoint = int(ano)
     
+    print('parseline(%s)' % line)
     line = line.strip()
     if len(line.strip()) == 1:
       return 
@@ -211,7 +213,15 @@ def get_pdf_from_user():
     pdf_files = [f for f in os.listdir(os.curdir) if f.endswith('.pdf')]
     return dialogs.list_dialog(title='pdf de ementa', items=pdf_files)
 
-filename = get_pdf_from_user()
+filename=''
+if appex.is_running_extension():
+  file_paths = appex.get_file_paths()
+  for i, file in enumerate(file_paths):
+    if file.endswith('.pdf'):
+    	print(file)
+    	filename=file
+else:
+  filename = get_pdf_from_user()
 file1 = 'ementaSIBS.pdf'
 file2='ementaSIBScomferiadoaumaquarta.pdf'
 feriados = holidays.Portugal() #
@@ -293,10 +303,14 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
     if export_text == True:
       print line
       continue
-    '''bug do parser quando retorna por exemplo Grelhado 721'''    
-    if len(line.split(' '))== 2:
+    '''bug do parser quando retorna por exemplo Grelhado 721'''   
+    if len(filter(None,line.split(' ')))==2:
         tempAr = line.split(' ')
+        tempAr=filter(None, tempAr)
         if (tempAr[0] in tipo_prato and tempAr[1].isdigit()) or (tempAr[0].isdigit() and tempAr[1] in tipo_prato):
+            print('&&&&&&&&&&&')
+            print('0:',tempAr[0])
+            print('1:',tempAr[1])
             parseLine(tempAr[0])
             parseLine(tempAr[1])
             continue
