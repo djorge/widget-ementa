@@ -222,6 +222,8 @@ if appex.is_running_extension():
     	filename=file
 else:
   filename = get_pdf_from_user()
+if filename is None:
+  exit()
 file1 = 'ementaSIBS.pdf'
 file2='ementaSIBScomferiadoaumaquarta.pdf'
 feriados = holidays.Portugal() #
