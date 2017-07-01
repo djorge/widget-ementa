@@ -12,27 +12,28 @@ import appex, ui
 import sys
 import re
 import datetime
-import holidays
 from datetime import date
 import shelve
 import os
-import dialogs
 from datetime import timedelta
 
 
-line1text = 'ementa 1ARCTIC - Construction-ARCTIC fgjj-'
+'''line1text = 'ementa 1ARCTIC - Construction-ARCTIC fgjj-'
 line2text = 'ementa 2 Melhoria Contínua de processos internos-'
 line3text = 'ementa 3'
 line4text = 'ementa 4'
 line5text = 'ementa 5'
 
 dia = {}
+'''
 
-feriados = holidays.Portugal()
 
 class EmentaView (ui.View):
 
   def __init__(self, dia, *args, **kwargs):
+    '''import feito aqui porque se for feito no cabeçalho causa o refresh da widgget'''
+    import holidays
+    self.feriados = holidays.Portugal()
     super().__init__(self, *args, **kwargs)
     self.dia=dia
     self.hoje = datetime.datetime.now()
@@ -165,7 +166,7 @@ class EmentaView (ui.View):
   
     for i, lbl in enumerate(self.labels):
       lbl.text=''
-      if self.diaidx not in self.dia.keys() or self.hoje in feriados:
+      if self.diaidx not in self.dia.keys() or self.hoje in self.feriados:
         lbl.text='Sem dados'
       else:
         #print('--')
@@ -187,24 +188,18 @@ class EmentaView (ui.View):
       
 
 def main():
-  shelve_file  = shelve.open('data')
-  dia = shelve_file['dia']
-  
-  feriados = holidays.Portugal()
-  #print('=====keys====')
-  #print ('keys',dia.keys())
-  
-  #hoje = datetime.datetime(2017,5,15)
-  shelve_file.close()
-
-  # Optimization: Don't create a new view if the widget already shows the calculator.
   widget_name = __file__ + str(os.stat(__file__).st_mtime)
-  widget_view = appex.get_widget_view()
-  if widget_view is None or       widget_view.name != widget_name:
-    widget_view = EmentaView(dia)
-    widget_view.name = widget_name
-    appex.set_widget_view(widget_view)
+  v = appex.get_widget_view()
+  # Optimization: Don't create a new view if the widget already shows the :launcher.
+  if v is None or v.name != widget_name: 
+    shelve_file  = shelve.open('data')
+    dia = shelve_file['dia']
+    #print('=====keys====')
+    #print ('keys',dia.keys())
+  
+    v = EmentaView(dia)
+    v.name = widget_name
+    appex.set_widget_view(v)
 
 if __name__ == '__main__':
   main()
-
