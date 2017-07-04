@@ -20,7 +20,7 @@ last_ementa=None
 export_text=False
 shift_feriado=0
 dias_feriado =[]
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
@@ -96,11 +96,12 @@ def get_dia(diaint,mes,ano,item_count,item):
       else:
         break
     itemlinha = item_count
-    
+    if item in tipo_prato:
+      itemlinha+=1
+
     print '%d%d%d=%d'%(diaint,mesint,anoint,item_count)
     print '%d=%d%%%d'%(itemlinha,item_count, item_max)
-  if item in tipo_prato:
-    itemlinha+=1
+  
   return (diaint,mesint,anoint,itemlinha)
 
 def convert(fname, pages=None):
@@ -194,11 +195,8 @@ def parseLine(line):
       diaidx = str(anoint) + str(mesint)+ str(diaint)
       print "dia[%s][%d]['calorias']"%(diaidx,item_linha)  
       dia[diaidx][item_linha]['calorias'] = line.decode('utf-8')
-      return
-
-    #if last_ementa == line:
-      '''duplicado, bug do parser pdf'''
-      #return
+      return 
+      
     ementa+=1
     
     
