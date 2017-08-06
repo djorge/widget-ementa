@@ -1,4 +1,5 @@
 # -*- coding: utf-8
+#!python2
 
 from cStringIO import StringIO
 from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
@@ -18,9 +19,12 @@ import appex
 
 last_ementa=None
 export_text=False
-shift_feriado=0
+shift_feriado_ementa=9
+shift_feriado_tipo_prato=0
+shift_feriado_calorias=0
+shift_feriado_refeicao=9
 dias_feriado =[]
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
@@ -38,7 +42,50 @@ decimal= 0
 ementa=0
 dia = {}
 feriados = holidays.Portugal()
-shift_feriado =0
+
+
+def reset_shift_feriado():
+  global shift_feriado_tipo_prato,shift_feriado_calorias,shift_feriado_ementa,shift_feriado_refeicao
+  shift_feriado_calorias=0
+  shift_feriado_ementa=0
+  shift_feriado_tipo_prato=0
+  shift_feriado_refeicao=0
+
+def shift_feriado(item):
+  global shift_feriado_tipo_prato,shift_feriado_calorias,shift_feriado_ementa,shift_feriado_refeicao
+  
+  if item in tipo_prato:
+    print('shift_feriado_tipo_prato: ',shift_feriado_tipo_prato)
+    return shift_feriado_tipo_prato
+  if item in refeicao:
+    print('shift_feriado_refeicao: ',shift_feriado_refeicao)
+    return shift_feriado_refeicao
+  if item.isdigit():
+    print('shift_feriado_calorias: ',shift_feriado_calorias)
+    return shift_feriado_calorias
+  print('shift_feriado_ementa: ',shift_feriado_ementa)
+  return shift_feriado_ementa
+
+def inc_shift_feriado(item):
+  global shift_feriado_tipo_prato,shift_feriado_calorias,shift_feriado_ementa,shift_feriado_refeicao
+
+  
+  if item in tipo_prato:
+    shift_feriado_tipo_prato+=1
+    print('shift_feriado_tipo_prato: ',shift_feriado_tipo_prato)
+    return shift_feriado_tipo_prato
+  if item in refeicao:
+    shift_feriado_refeicao+=1
+    print('shift_feriado_refeicao: ',shift_feriado_refeicao)
+    return shift_feriado_refeicao
+  if item.isdigit():
+    shift_feriado_calorias+=1
+    print('shift_feriado_calorias: ',shift_feriado_calorias)
+    return shift_feriado_calorias
+  
+  shift_feriado_ementa+=1
+  print('shift_feriado_ementa: ',shift_feriado_ementa)
+  return shift_feriado_ementa
 
 #feriados =[date(2017,4,15), date(2017,5,25)]
 def get_dia(diaint,mes,ano,item_count,item):
@@ -47,7 +94,6 @@ def get_dia(diaint,mes,ano,item_count,item):
   retorna tuplo com dia a usar e numero de linha onde colocar o item
   Faz a correcao para o caso de ser feriado
   '''
-  global shift_feriado
   print 'get_dia(%d,%d,%d,%d, %s)'%(diaint,mes,ano,item_count,item)
   item_max = 5
   if item in tipo_prato:
@@ -68,7 +114,7 @@ def get_dia(diaint,mes,ano,item_count,item):
       anoint = dt.year
       #diaint-=1
     while True:
-      dt+= datetime.timedelta(days=shift_feriado)
+      dt+= datetime.timedelta(days=shift_feriado(item))
       diaint = dt.day
       mesint = dt.month
       anoint = dt.year
@@ -76,7 +122,7 @@ def get_dia(diaint,mes,ano,item_count,item):
       if date(int(ano),mesint, diaint) in feriados:
         print ',1++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
-        shift_feriado+=1
+        inc_shift_feriado(item)
       else:
         break
     print '%d=%d/%d'%(diaint,item_count, item_max)
@@ -84,7 +130,8 @@ def get_dia(diaint,mes,ano,item_count,item):
   else:
     dt = datetime.datetime(ano, mes, diaint)
     while True:
-      dt+= datetime.timedelta(days=shift_feriado)
+      shift = shift_feriado(item)
+      dt+= datetime.timedelta(days=shift)
       diaint = dt.day
       mesint = dt.month
       anoint = dt.year
@@ -92,13 +139,13 @@ def get_dia(diaint,mes,ano,item_count,item):
       if date(anoint,mesint, diaint) in feriados:
         print '2++++++++++++++++++++ %d/%d/%d'%(ano,mesint,diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
-        shift_feriado+=1
+        inc_shift_feriado(item)
       else:
         break
     itemlinha = item_count
     if item in tipo_prato:
       itemlinha+=1
-
+    
     print '%d%d%d=%d'%(diaint,mesint,anoint,item_count)
     print '%d=%d%%%d'%(itemlinha,item_count, item_max)
   
@@ -227,7 +274,7 @@ file2='ementaSIBScomferiadoaumaquarta.pdf'
 feriados = holidays.Portugal() #
 print date(2017, 4, 14) in feriados # True
 for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
-  if pagenum !=0 :
+  if pagenum !=4 :
     #continue
     pass
 
@@ -258,7 +305,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
     
   if diaidx not in dia.keys(): 
       #reset counters
-      shift_feriado=0
+      reset_shift_feriado()
       numtipo_prato=0
       decimal=0
       ementa=0
@@ -321,6 +368,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       
 print'------------------------var dia'      
 print 'dia',dia
+print 'keys',dia.keys()
 '''jsondata = dia
 json_data = json.dumps(dia)
 print'------------------------json_data'
