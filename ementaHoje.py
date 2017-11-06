@@ -24,16 +24,26 @@ shift_feriado_tipo_prato=0
 shift_feriado_calorias=0
 shift_feriado_refeicao=9
 dias_feriado =[]
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
 crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, 
 frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de 
 sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos à base de moluscos.'''
-ignorar2=['ª','Alfragide','ALMOÇO','Semana de','Nota:']
+ignorar2=['ª','Alfragide','ALMOÇO','Semana de','Nota:','EMENTA']
 ignorar3='Semana de'
 ignorar4='''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos à base de moluscos.'''
+
+ignorar5='''*Prato Confeccionado c/ Ovos Pasteurizados'''
+
+ignorar6='''Nota: Os Pratos confeccionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base
+destes  cereais,  crustáceos  e  produtos  à  base  de  crustáceos,  ovos  e  produtos  à  base  de  ovos,  peixes  e  produtos  à  base  de  peixe,
+amendoins  e  produtos  à  base  de  amendoins,  soja  e  produtos  à  base  de  soja,  leite  e  produtos  à  base  de  leite,  frutos  de  casca  rija  e
+produtos  à  base  destes  frutos,  aipo  e  produtos  à  base  de  aipo,  mostarda  e  produtos  à  base  de  mostarda,  sementes  de  sésamo  e
+produtos à base de sementes de sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos  à base
+de moluscos.'''
+
 numtipo_prato =0
 numrefeicao=0
 numcaloria=0
@@ -194,7 +204,13 @@ def parseLine(line):
       return      
     if line.strip() in ignorar4:
       print 'ignorar4 matched. comtinue...'
-      return      
+      return     
+    if line.strip() in ignorar5:
+      print 'ignorar5 matched. comtinue...'
+      return    
+    if line.strip() in ignorar6:
+      print 'ignorar6 matched. comtinue...'
+      return          
     salta = False
     for word in ignorar2:
       if line.strip().startswith(word):
@@ -347,11 +363,14 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
   print(dia.keys())
   for line in textPage.split('\n'):
     line = line.strip()
+    if line.find('destes  cereais') >-1:
+      para = True
     if export_text == True:
       print line
       continue
     '''bug do parser quando retorna por exemplo Grelhado 721'''   
-    if len(filter(None,line.split(' ')))==2:
+    print('line.split: {}'.format(line.split(' ')))
+    if len(filter(None,line.split(' ')))>=2:
         tempAr = line.split(' ')
         tempAr=filter(None, tempAr)
         if (tempAr[0] in tipo_prato and tempAr[1].isdigit()) or (tempAr[0].isdigit() and tempAr[1] in tipo_prato):
@@ -361,6 +380,14 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
             parseLine(tempAr[0])
             parseLine(tempAr[1])
             continue
+        if tempAr[0] in refeicao and len(tempAr[1])>1:
+          print('***** 2 em 1')
+          print('0:',tempAr[0])
+          st=' '.join(tempAr[1:])
+          print('2..:',st)
+          parseLine(tempAr[0])
+          parseLine(st)
+          continue
     print "->",line
     
     parseLine(line)
