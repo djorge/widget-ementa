@@ -16,6 +16,7 @@ import os
 import dialogs
 from datetime import timedelta
 import appex
+import codecs
 
 last_ementa=None
 export_text=False
@@ -43,6 +44,8 @@ amendoins  e  produtos  à  base  de  amendoins,  soja  e  produtos  à  base  d
 produtos  à  base  destes  frutos,  aipo  e  produtos  à  base  de  aipo,  mostarda  e  produtos  à  base  de  mostarda,  sementes  de  sésamo  e
 produtos à base de sementes de sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos  à base
 de moluscos.'''
+
+textos_ignorar=[ignorar,ignorar3, ignorar4, ignorar5,ignorar6]
 
 numtipo_prato =0
 numrefeicao=0
@@ -172,7 +175,8 @@ def convert(fname, pages=None):
   converter = TextConverter(manager, output, laparams=LAParams())
   interpreter = PDFPageInterpreter(manager, converter)
 
-  infile = file(fname, 'rb')
+  #infile = file(fname, 'rb')
+  infile = codecs.open(fname,'rb')
   #for pageNumber, page in enumerate(PDFDocument.get_pages()):
   for page in PDFPage.get_pages(infile, pagenums):
     interpreter.process_page(page)
@@ -279,7 +283,7 @@ if appex.is_running_extension():
   file_paths = appex.get_file_paths()
   for i, file in enumerate(file_paths):
     if file.endswith('.pdf'):
-    	print(file)
+    	print('++++++++',file)
     	filename=file
 else:
   filename = get_pdf_from_user()
