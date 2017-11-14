@@ -104,7 +104,12 @@ class EmentaView (ui.View):
     self.plus_btn = ui.Button(name='+', image=ui.Image('iow:ios7_plus_outline_32'), flex='hl', tint_color='#666', action=self.button_tapped)
     self.plus_btn.frame = (320-110,self.display_view.bounds.height-60 , 64, 64)
     self.display_view.add_subview(self.plus_btn)
+    
+    self.refresh_btn = ui.Button(name='refresh', image=ui.Image('typb:Refresh'), flex='hl', tint_color='#666', action=self.refresh_data)
+    self.refresh_btn.frame = (320-60,self.display_view.bounds.height-48 , 40, 40)
+    self.display_view.add_subview(self.refresh_btn)
     self.update_view()
+    
   def make_label(self,pos,frame, nlines,lb):
     tamfonte = 12
     return ui.Label(flex=pos,frame=frame,font = ('Menlo', tamfonte), number_of_lines = nlines, background_color=(0.9,0.9, .9),border_color=(.5, .5, .5), line_break_mode=lb,border_width=1, corner_radius=5)
@@ -151,6 +156,15 @@ class EmentaView (ui.View):
       self.minus_btn.hidden=True
       self.plus_btn.hidden=True
       self.dia_semana.hidden = True
+      
+  def set_data(self,new_data):
+    self.dia= new_data
+    self.update_view()
+      
+  def refresh_data(self,sender):
+    shelve_file  = shelve.open('data')
+    dia = shelve_file['dia']
+    self.set_data(dia)
   
   def button_tapped(self,sender):
     if sender.name=='+':
