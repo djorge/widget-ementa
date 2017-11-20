@@ -18,21 +18,21 @@ from datetime import timedelta
 import appex
 import codecs
 
-last_ementa=None
+last_ementa=False
 export_text=False
 shift_feriado_ementa=9
 shift_feriado_tipo_prato=0
 shift_feriado_calorias=0
 shift_feriado_refeicao=9
 dias_feriado =[]
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada','Estfado']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
 crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, 
 frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de 
 sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos à base de moluscos.'''
-ignorar2=['ª','Alfragide','ALMOÇO','Semana de','Nota:','EMENTA']
+ignorar2=['ª','Alfragide','ALMOÇO','Semana de','Nota:','EMENTA','MB Café']
 ignorar3='Semana de'
 ignorar4='''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de crustáceos, ovos e produtos à base de ovos, peixes e produtos à base de peixe, amendoins e produtos à base de amendoins, soja e produtos à base de soja, leite e produtos à base de leite, frutos de casca rija e produtos à base destes frutos, aipo e produtos à base de aipo, mostarda e produtos à base de mostarda, sementes de sésamo e produtos à base de sementes de sésamo, dióxido de enxofre e sulfitos, tremoço e produtos à base tremoço, moluscos e produtos à base de moluscos.'''
 
@@ -195,7 +195,7 @@ def parseLine(line):
     mesint = int(demes)
     anoint = int(ano)
     
-    print('parseline(%s)' % line)
+    #print('parseline(%s)' % line)
     line = line.strip()
     if len(line.strip()) == 1:
       return 
@@ -301,15 +301,20 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
   print('page-----------'+str(pagenum))
   page=[pagenum]
   textPage = convert(filename, page)
-  if len(textPage) == 0 or 'Alfragide'   not in textPage:
+  if len(textPage) == 0:
+    continue
+  '''if page < 5:
+    if 'Alfragide' not in textPage:
+      continue'''
+  if  (pagenum % 2):
     continue
   #print(text)
  # hoje = datetime.datetime.now()
   hoje = datetime.datetime(datetime.datetime.now().year, datetime.datetime.now().month,datetime.datetime.now().day,0,0,0)
   semana = re.compile(r'Semana de (\d\d)/(\d\d) a (\d\d)/(\d\d)/(\d\d\d\d)')
   dias = semana.search(textPage)
-  
-  
+  if dias is None:
+    continue
   dedia = dias.group(1)
   demes = dias.group(2)
   adia = dias.group(3)
@@ -373,7 +378,7 @@ for pagenum in [0,1,2,3,4,5,6,7,8,9,10]:
       print line
       continue
     '''bug do parser quando retorna por exemplo Grelhado 721'''   
-    print('line.split: {}'.format(line.split(' ')))
+    #print('line.split: {}'.format(line.split(' ')))
     if len(filter(None,line.split(' ')))>=2:
         tempAr = line.split(' ')
         tempAr=filter(None, tempAr)
