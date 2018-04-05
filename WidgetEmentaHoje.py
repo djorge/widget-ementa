@@ -5,6 +5,7 @@
 This widget script simply shows the current contents of the clipboard.
 The clipboard can be cleared by tapping the "trash" button.
 '''
+#ch
 
 
 
