@@ -26,7 +26,8 @@ shift_feriado_tipo_prato=0
 shift_feriado_calorias=0
 shift_feriado_refeicao=9
 dias_feriado =[]
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada','Estfado','A Vapor']
+
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada','Estfado','A Vapor','EStufado','Assdao','Braseado','Gratinado','Gelhado']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
@@ -56,7 +57,7 @@ decimal= 0
 ementa=0
 dia = {}
 feriados = holidays.Portugal()
-
+feriados_ignorar = [date(2018,5,31)]
 
 def reset_shift_feriado():
   global shift_feriado_tipo_prato,shift_feriado_calorias,shift_feriado_ementa,shift_feriado_refeicao
@@ -136,7 +137,11 @@ def get_dia(diaint,mes,ano,item_count,item):
       if date(int(ano),mesint, diaint) in feriados:
         print ',1++++++++++++++++++++ %d/%d/%d'%(int(ano),mesint,diaint)
         #dia[str(diaint)][ementalinha]['ementa'] = 'Feriado'
-        inc_shift_feriado(item)
+        if date(int(ano),mesint, diaint) not in feriados_ignorar:
+          inc_shift_feriado(item)
+        else:
+          print ',1++++++++++++++++++++ ignorado'
+          break
       else:
         break
     print '%d=%d/%d'%(diaint,item_count, item_max)
