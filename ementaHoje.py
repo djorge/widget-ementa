@@ -27,7 +27,7 @@ shift_feriado_calorias=0
 shift_feriado_refeicao=9
 dias_feriado =[]
 
-tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada','Estfado','A Vapor','EStufado','Assdao','Braseado','Gratinado','Gelhado']
+tipo_prato = ['Frito','Assado', 'Grelhado' , 'Cozido', 'Gratin.', 'Estufado','estufado','Grelh.','EStufado','Assada','Estufadas','Gratinados','Guisado','Gratinado','grelhado','Estufada','Cebolada','Estfado','A Vapor','EStufado','Assdao','Braseado','Gratinado','Gelhado','Fritos','Grelhados','Gelhada']
 refeicao = ['SOPA','PEIXE','CARNE','DIETA','OPÇÃO']
 shelve_file = shelve.open('data')
 ignorar = '''Nota: Os Pratos confecionados nesta ementa semanal podem conter os seguintes alergénios: cereais que contêm glúten e produtos à base destes cereais, crustáceos e produtos à base de 
