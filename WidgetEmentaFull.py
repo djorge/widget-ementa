@@ -26,7 +26,9 @@ line5text = 'ementa 5'
 
 dia = {}
 '''
-
+def setbox(uiobj,color='red'):
+    uiobj.border_color=color
+    uiobj.border_width=0
 
 class EmentaView (ui.View):
 
@@ -39,7 +41,7 @@ class EmentaView (ui.View):
     self.hoje = datetime.datetime.now()
 
     self.labels = []
-    self.dia_sem_lookup = ('Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo')
+    self.dia_sem_lookup = ('Seg','Ter','Qua','Qui','Sex','Sáb','Dom')
     
     linex1=4
     liney1=0.
@@ -48,13 +50,13 @@ class EmentaView (ui.View):
     linesep = 2
     lb_break_mode = ui.LB_TRUNCATE_TAIL
     #
-    self.display_view = ui.View(frame=(0, 0, 320, 220))
+    self.display_view = ui.View(frame=(0, 0, 358, 220))
     self.bounds = (0, 0, 500, 220)
-    
+    setbox(self.display_view)
     self.diaidx = str(self.hoje.year) + str(self.hoje.month)+ str(self.hoje.day)
     
     self.line1lbl=self.make_label('tr',(linex1, liney1, linex2, liney2),2, lb_break_mode )
-    #self.line1lbl.text = self.dia[self.diaidx][1]['ementa']
+    setbox(self.line1lbl)
     self.display_view.add_subview(self.line1lbl)
     
     line1lbl=self.line1lbl
@@ -62,26 +64,29 @@ class EmentaView (ui.View):
     
     #line2
     self.line2lbl= self.make_label('tr',frame=(linex1,line1lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    #self.line2lbl.text = self.dia[self.diaidx][2]['ementa']
+    setbox(self.line2lbl,'green')
     
     line2lbl=self.line2lbl
+    setbox(line2lbl)
     self.display_view.add_subview(line2lbl)
 
     #line3
     self.line3lbl= self.make_label('tr',frame=(linex1, line2lbl.y+line1lbl.height+ linesep, linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    #self.line3lbl.text = self.dia[self.diaidx][3]['ementa']
+
     line3lbl=self.line3lbl
+    setbox(self.line3lbl)
     self.display_view.add_subview(line3lbl)
 
     #line4
     self.line4lbl= self.make_label('tr',frame=(linex1, line3lbl.y+line3lbl.height+ linesep,linex2, line1lbl.height), nlines=2,lb =lb_break_mode)
-    #self.line4lbl.text = self.dia[self.diaidx][4]['ementa']
+    
     line4lbl=self.line4lbl
+    setbox(self.line4lbl)
     self.display_view.add_subview(line4lbl)
 
     #line5
     self.line5lbl = self.make_label('tr',frame=(linex1, line4lbl.y+line4lbl.height+ linesep,linex2, line1lbl.height) ,nlines=2,lb =lb_break_mode)
-    #self.line5lbl.text = self.dia[self.diaidx][5]['ementa']
+    setbox(self.line5lbl)
     line5lbl=self.line5lbl
     self.display_view.add_subview(line5lbl)
     self.add_subview(self.display_view)
@@ -90,24 +95,43 @@ class EmentaView (ui.View):
     self.labels.append(line3lbl)
     self.labels.append(line4lbl)
     self.labels.append(line5lbl)
+    setbox(line5lbl)
     
-    self.dia_semana=ui.Label('wh',frame=(0, self.line5lbl.y+self.line5lbl.height, 300, 16),font=('HelveticaNeue-Light', 14), alignment=ui.ALIGN_CENTER,text=str(self.dia_sem_lookup[self.hoje.weekday()]))
-    self.display_view.add_subview(self.dia_semana)
-    self.dia_semana.hidden=True
-    self.dia_em=ui.Label('wh',frame=(0, self.line5lbl.y+self.line5lbl.height+linesep, 300, 32),font=('HelveticaNeue-Light', 32), alignment=ui.ALIGN_CENTER,text=str(self.hoje.day))
+    self.btx= 310
+  
+    
+    #todo bt menos
+    self.minus_btn = ui.Button(name='-', image=ui.Image('iow:ios7_minus_outline_32'), flex='hl', tint_color='#666', action=self.button_tapped)
+    self.minus_btn.frame = (self.btx, 5, 32,32)
+    setbox(self.minus_btn,'yellow')
+    self.display_view.add_subview(self.minus_btn)
+    
+    #todo dia da semana
+    self.dia_em=ui.Label('',frame=(self.btx+self.minus_btn.frame.width/6,self.minus_btn.frame.y+self.minus_btn.frame.height,23,23),text_color='red',font=('HelveticaNeue-Light', 18), alignment=ui.ALIGN_CENTER,text=str(self.hoje.day))
+    
+    setbox(self.dia_em,'blue')
     self.add_subview(self.dia_em)
     self.dia_em.hidden=True
     
-    self.minus_btn = ui.Button(name='-', image=ui.Image('iow:ios7_minus_outline_32'), flex='hl', tint_color='#666', action=self.button_tapped)
-    self.minus_btn.frame = (20, self.display_view.bounds.height-60, 64, 64)
-    self.display_view.add_subview(self.minus_btn)
+    #todo bt mais
     self.plus_btn = ui.Button(name='+', image=ui.Image('iow:ios7_plus_outline_32'), flex='hl', tint_color='#666', action=self.button_tapped)
-    self.plus_btn.frame = (320-110,self.display_view.bounds.height-60 , 64, 64)
+    self.plus_btn.frame = (self.btx,self.dia_em.frame.y+self.dia_em.frame.height, 32, 32)
     self.display_view.add_subview(self.plus_btn)
     
+    setbox(self.plus_btn)
+    #todo bt refresh
     self.refresh_btn = ui.Button(name='refresh', image=ui.Image('typb:Refresh'), flex='hl', tint_color='#666', action=self.refresh_data)
-    self.refresh_btn.frame = (320-60,self.display_view.bounds.height-48 , 40, 40)
+    self.refresh_btn.frame = (self.btx,self.line5lbl.y+self.line5lbl.height +5, 30, 30)
     self.display_view.add_subview(self.refresh_btn)
+    setbox(self.refresh_btn)
+    
+    #todo texto dia da semana por extenso 
+    self.dia_semana=ui.Label('wh',frame=(self.btx, self.refresh_btn.y+self.refresh_btn.height/2, 30,30),font=('HelveticaNeue-Light', 14), alignment=ui.ALIGN_CENTER,text=str(self.dia_sem_lookup[self.hoje.weekday()]))
+    setbox(self.dia_semana)
+    self.display_view.add_subview(self.dia_semana)
+    self.dia_semana.hidden=True
+    
+    
     self.update_view()
     
   def make_label(self,pos,frame, nlines,lb):
@@ -144,18 +168,19 @@ class EmentaView (ui.View):
       lbl.y=prev_y+line1lbl.height+ linesep
       prev_y=lbl.y
     if not self.compact:
-      self.dia_em.y= line5lbl.y+self.line5lbl.height+linesep*8
-      self.dia_semana.y=line5lbl.y+line5lbl.height+linesep
+      #self.dia_em.y= line5lbl.y+self.line5lbl.height+linesep*8
+      #self.dia_semana.y=line5lbl.y+line5lbl.height+linesep
       self.dia_em.hidden=False
       self.plus_btn.hidden=False
       self.minus_btn.hidden=False
       self.dia_em.text=str(self.hoje.day)
       self.dia_semana.hidden = False
     else:
-      self.dia_em.hidden=True
-      self.minus_btn.hidden=True
-      self.plus_btn.hidden=True
-      self.dia_semana.hidden = True
+      #self.dia_em.hidden=True
+      #self.minus_btn.hidden=True
+      #self.plus_btn.hidden=True
+      #self.dia_semana.hidden = True
+      pass
       
   def set_data(self,new_data):
     self.dia= new_data
@@ -175,6 +200,7 @@ class EmentaView (ui.View):
     self.update_view()
     
   def update_view(self):
+    self.compact = self.height < 150
     self.dia_em.text=str(self.hoje.day)
     self.dia_semana.text=self.dia_sem_lookup[self.hoje.weekday()]
   
@@ -197,8 +223,9 @@ class EmentaView (ui.View):
         if len(refeicao) > 0:
           lbl.text = refeicao + '|'
         lbl.text+= ementa 
-        if calorias != '{}':
-          lbl.text+='|'+calorias
+        if not self.compact:
+          if calorias != '{}':
+            lbl.text+='|'+calorias
       
 
 def main():
